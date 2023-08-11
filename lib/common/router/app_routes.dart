@@ -1,11 +1,13 @@
-enum AppRoutes {
-  home('/home', '首页', '首页'),
-  login('/login', '登录页', '登录页'),
-  gridPatrol('/grid-patrol', '巡视打卡', '巡视打卡');
+class AppRoutes {
+  /// 包含BottomNavigationBar的主页面，即登录后跳转的主页
+  static const String tabs = '/tabs';
 
-  const AppRoutes(this.path, this.title, this.desc);
+  /// 首页，在tabs中，一般不会当作路由跳转
+  static const String home = '/home';
 
-  final String path;
-  final String title;
-  final String desc;
+  /// 我的，在tabs中，一般不会当作路由跳转
+  static const String mine = '/mine';
+
+  /// 登录页
+  static const String login = '/login';
 }

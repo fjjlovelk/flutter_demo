@@ -8,15 +8,8 @@ class HomePage extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PageView(children: []),
-      bottomNavigationBar: Obx(
-        () => BottomNavigationBar(
-          currentIndex: controller.state.currentTab,
-          selectedFontSize: 12.0,
-          type: BottomNavigationBarType.fixed,
-          items: controller.state.bottomTabs,
-          onTap: controller.bottomNavigationBarTab,
-        ),
+      appBar: AppBar(
+        title: const Text('home'),
       ),
     );
   }

@@ -9,6 +9,6 @@ class AuthMiddleware extends GetMiddleware {
     if (UserStore.to.isLogin) {
       return null;
     }
-    return RouteSettings(name: AppRoutes.login.path);
+    return const RouteSettings(name: AppRoutes.login);
   }
 }
