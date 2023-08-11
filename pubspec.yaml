@@ -33,6 +33,8 @@ dependencies:
   path_provider: ^2.0.15
   # 权限相关
   permission_handler: ^10.4.3
+  # 图片选取
+  image_picker: ^1.0.1
 
 dev_dependencies:
   flutter_lints: ^2.0.0
