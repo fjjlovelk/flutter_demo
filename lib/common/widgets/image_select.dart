@@ -1,7 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 
 /// FileUpload中的加号
@@ -51,6 +54,11 @@ class ImageSelect extends StatelessWidget {
   void onSelectCamera() async {
     Get.back();
     XFile? pickedFile = await imagePicker.pickImage(source: ImageSource.camera);
+    if (pickedFile == null) {
+      return;
+    }
+    Uint8List bytes = await pickedFile.readAsBytes();
+    final result = await ImageGallerySaver.saveImage(bytes, quality: 100);
     print(pickedFile);
   }
 
