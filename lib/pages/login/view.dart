@@ -10,8 +10,11 @@ class LoginPage extends GetView<LoginController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('登录页')),
-      body: const Center(
-        child: Text('登录页'),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: controller.login,
+          child: const Text('登录'),
+        ),
       ),
     );
   }

@@ -44,7 +44,7 @@ class HttpUtil {
 
   /// 错误处理
   void onError(DioException err) {
-    print(err.toString());
+    print('onError---${err.toString()}');
     switch (err.type) {
       case DioExceptionType.connectionTimeout:
         Loading.showError('连接超时');
@@ -62,7 +62,8 @@ class HttpUtil {
         Loading.showError('连接错误');
         break;
       case DioExceptionType.unknown:
-        Loading.showError('未知错误');
+        // 当err.type为unknown时err.error通常不为null
+        Loading.showError(err.error?.toString() ?? '未知错误');
         break;
       case DioExceptionType.badResponse:
         Loading.showError(err.message ?? '服务器错误');

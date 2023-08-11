@@ -25,8 +25,10 @@ class MyApp extends StatelessWidget {
           getPages: AppPages.routes,
           builder: EasyLoading.init(),
           debugShowCheckedModeBanner: false,
+          defaultTransition: Transition.cupertino,
           theme: ThemeData(
             useMaterial3: true,
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
             highlightColor: Colors.transparent,
             splashColor: Colors.transparent,
             appBarTheme: const AppBarTheme(

@@ -12,6 +12,12 @@ class MinePage extends GetView<MineController> {
       appBar: AppBar(
         title: const Text('我的'),
       ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: controller.logout,
+          child: const Text('退出登录'),
+        ),
+      ),
     );
   }
 }
