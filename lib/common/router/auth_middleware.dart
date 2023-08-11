@@ -1,0 +1,14 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_demo/common/router/app_routes.dart';
+import 'package:flutter_demo/common/store/user.dart';
+import 'package:get/get.dart';
+
+class AuthMiddleware extends GetMiddleware {
+  @override
+  RouteSettings? redirect(String? route) {
+    if (UserStore.to.isLogin) {
+      return null;
+    }
+    return RouteSettings(name: AppRoutes.login.path);
+  }
+}
