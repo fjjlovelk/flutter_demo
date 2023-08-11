@@ -1,6 +1,6 @@
 # flutter_demo
 
-grid app using flutter
+flutter开箱即用框架
 
 ## Getting Started
 
