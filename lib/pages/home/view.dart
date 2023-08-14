@@ -12,7 +12,7 @@ class HomePage extends GetView<HomeController> {
       appBar: AppBar(
         title: const Text('首页'),
       ),
-      body: const ImageUpload(),
+      body: ImageUpload(),
     );
   }
 }

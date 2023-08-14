@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,14 +7,22 @@ import 'package:image_picker/image_picker.dart';
 
 /// FileUpload中的加号
 class ImageSelect extends StatelessWidget {
-  final num size;
+  /// 盒子大小，默认80
+  final double boxSize;
 
+  /// 选择图片数量，-1为无限制，默认5张
   final int countLimit;
+
+  final void Function(List<XFile>) onChange;
 
   final ImagePicker imagePicker = ImagePicker();
 
-  ImageSelect({Key? key, this.size = 80, this.countLimit = 5})
-      : super(key: key);
+  ImageSelect({
+    Key? key,
+    this.boxSize = 80,
+    this.countLimit = -1,
+    required this.onChange,
+  }) : super(key: key);
 
   /// 点击事件
   void onTab() async {
@@ -46,20 +52,29 @@ class ImageSelect extends StatelessWidget {
   /// 选择图片
   void onSelectPhoto() async {
     Get.back();
-    List<XFile>? pickedFile = await imagePicker.pickMultiImage();
-    print(pickedFile);
+    List<XFile> pickedFile = await imagePicker.pickMultiImage();
+    if (pickedFile.isEmpty) {
+      return;
+    }
+    onChange(pickedFile);
   }
 
   /// 选择拍照
   void onSelectCamera() async {
     Get.back();
-    XFile? pickedFile = await imagePicker.pickImage(source: ImageSource.camera);
+    // 调用拍照
+    XFile? pickedFile = await imagePicker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 100,
+    );
     if (pickedFile == null) {
       return;
     }
-    Uint8List bytes = await pickedFile.readAsBytes();
-    final result = await ImageGallerySaver.saveImage(bytes, quality: 100);
-    print(pickedFile);
+    // 将拍照的临时图片保存到手机
+    await ImageGallerySaver.saveFile(pickedFile.path);
+    List<XFile> list = [];
+    list.add(pickedFile);
+    onChange(list);
   }
 
   /// 取消
@@ -73,15 +88,16 @@ class ImageSelect extends StatelessWidget {
       onTap: onTab,
       splashColor: Colors.black.withOpacity(0.1),
       child: Container(
-        width: ScreenUtil().setWidth(size),
-        height: ScreenUtil().setWidth(size),
+        width: ScreenUtil().setWidth(boxSize),
+        height: ScreenUtil().setWidth(boxSize),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           border: Border.all(color: Colors.black.withOpacity(0.3)),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
           Icons.add,
-          size: ScreenUtil().setWidth((size / 3).truncate()),
+          size: ScreenUtil().setWidth((boxSize / 3).truncate()),
           color: Colors.black.withOpacity(0.3),
         ),
       ),

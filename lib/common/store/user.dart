@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_demo/common/enums/storage_enum.dart';
-import 'package:flutter_demo/common/models/user_info.dart';
+import 'package:flutter_demo/common/models/user_model.dart';
 import 'package:flutter_demo/common/router/app_routes.dart';
 import 'package:flutter_demo/common/services/storage_service.dart';
 import 'package:flutter_demo/common/utils/loading.dart';
@@ -14,7 +14,7 @@ class UserStore extends GetxController {
   final _isLogin = false.obs;
 
   // 用户信息
-  final _userInfo = UserInfoModel().obs;
+  final _userInfo = UserModel().obs;
 
   // token
   final RxString _token = ''.obs;
@@ -25,7 +25,7 @@ class UserStore extends GetxController {
 
   String get token => _token.value;
 
-  UserInfoModel get userInfo => _userInfo.value;
+  UserModel get userInfo => _userInfo.value;
 
   @override
   void onInit() {
@@ -46,7 +46,7 @@ class UserStore extends GetxController {
       final userInfoOffline =
           StorageService.to.getString(StorageEnum.userInfo.name);
       if (userInfoOffline.isNotEmpty) {
-        _userInfo(UserInfoModel.fromJson(jsonDecode(userInfoOffline)));
+        _userInfo(UserModel.fromJson(jsonDecode(userInfoOffline)));
       }
     }
   }
@@ -55,7 +55,7 @@ class UserStore extends GetxController {
   void handleLogin(Map<String, dynamic> data) async {
     try {
       // UserInfoModel u = await UserApi.login(data);
-      UserInfoModel u = UserInfoModel(
+      UserModel u = UserModel(
         id: '1',
         username: 'fjj',
         accessToken: '111111111',
@@ -79,7 +79,7 @@ class UserStore extends GetxController {
       if (!isExpire) {
         // await UserApi.logout();
       }
-      UserInfoModel u = UserInfoModel(
+      UserModel u = UserModel(
         id: '',
         username: '',
         accessToken: '',

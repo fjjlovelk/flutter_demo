@@ -1,16 +1,16 @@
 // 用户信息
-class UserInfoModel {
+class UserModel {
   String? id;
   String? username;
   String? accessToken;
 
-  UserInfoModel({
+  UserModel({
     this.id,
     this.username,
     this.accessToken,
   });
 
-  factory UserInfoModel.fromJson(Map<String, dynamic> json) => UserInfoModel(
+  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
         id: json["id"],
         username: json["username"],
         accessToken: json["accessToken"],
