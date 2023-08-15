@@ -21,5 +21,6 @@ class FileModel {
   Map<String, dynamic> toJson() => {
         "filepath": filepath,
         "filename": filename,
+        "data": data,
       };
 }

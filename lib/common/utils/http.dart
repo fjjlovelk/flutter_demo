@@ -171,9 +171,10 @@ class HttpUtil {
   /// restful post form 表单提交操作
   Future postForm(
     String path, {
-    dynamic data,
+    required Map<String, dynamic> data,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    void Function(int, int)? onSendProgress,
   }) async {
     Options requestOptions = options ?? Options();
     var response = await dio.post(
@@ -182,6 +183,7 @@ class HttpUtil {
       queryParameters: queryParameters,
       cancelToken: cancelToken,
       options: requestOptions,
+      onSendProgress: onSendProgress,
     );
     return response.data;
   }

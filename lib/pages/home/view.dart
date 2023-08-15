@@ -12,7 +12,12 @@ class HomePage extends GetView<HomeController> {
       appBar: AppBar(
         title: const Text('首页'),
       ),
-      body: ImageUpload(),
+      body: ImageUpload(
+        // items: controller.state.fileList,
+        onChange: (file) {
+          // controller.state.fileList = file;
+        },
+      ),
     );
   }
 }
