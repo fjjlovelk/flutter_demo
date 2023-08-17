@@ -107,6 +107,7 @@ class _ImageUploadState extends State<ImageUpload> {
                 ImageSelect(
                   boxSize: itemWidth,
                   countLimit: widget.countLimit,
+                  selectedCount: _fileList.length,
                   onChange: onChange,
                 ),
             ],

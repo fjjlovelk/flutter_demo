@@ -13,6 +13,9 @@ class ImageSelect extends StatelessWidget {
   /// 选择图片数量，-1为无限制，默认5张
   final int countLimit;
 
+  /// 已选选择图片数量
+  final int selectedCount;
+
   final void Function(List<String>) onChange;
 
   const ImageSelect({
@@ -20,6 +23,7 @@ class ImageSelect extends StatelessWidget {
     this.boxSize = 80,
     this.countLimit = -1,
     required this.onChange,
+    this.selectedCount = 0,
   }) : super(key: key);
 
   /// 点击事件
@@ -53,8 +57,9 @@ class ImageSelect extends StatelessWidget {
     final List<AssetEntity>? result = await AssetPicker.pickAssets(
       context,
       pickerConfig: AssetPickerConfig(
-        maxAssets: countLimit == -1 ? 99 : countLimit,
+        maxAssets: (countLimit == -1 ? 99 : countLimit) - selectedCount,
         requestType: RequestType.image,
+        textDelegate: const AssetPickerTextDelegate(),
       ),
     );
     if (result == null) {
@@ -98,6 +103,7 @@ class ImageSelect extends StatelessWidget {
     return InkWell(
       onTap: () => onTab(context),
       splashColor: Colors.black.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(8),
       child: Container(
         width: boxSize,
         height: boxSize,
