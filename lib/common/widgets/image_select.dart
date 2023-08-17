@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:wechat_assets_picker/wechat_assets_picker.dart';
+import 'package:wechat_camera_picker/wechat_camera_picker.dart';
 
 /// FileUpload中的加号
 class ImageSelect extends StatelessWidget {
@@ -13,11 +13,9 @@ class ImageSelect extends StatelessWidget {
   /// 选择图片数量，-1为无限制，默认5张
   final int countLimit;
 
-  final void Function(List<XFile>) onChange;
+  final void Function(List<String>) onChange;
 
-  final ImagePicker imagePicker = ImagePicker();
-
-  ImageSelect({
+  const ImageSelect({
     Key? key,
     this.boxSize = 80,
     this.countLimit = -1,
@@ -25,19 +23,19 @@ class ImageSelect extends StatelessWidget {
   }) : super(key: key);
 
   /// 点击事件
-  void onTab() async {
+  void onTab(BuildContext context) async {
     showCupertinoModalPopup(
-      context: Get.context!,
+      context: context,
       builder: (_) => CupertinoActionSheet(
         actions: [
           CupertinoActionSheetAction(
-            onPressed: onSelectPhoto,
+            onPressed: () => onSelectPhoto(context),
             child: countLimit == -1
                 ? const Text('图片')
                 : Text('图片 (最多$countLimit张)'),
           ),
           CupertinoActionSheetAction(
-            onPressed: onSelectCamera,
+            onPressed: () => onSelectCamera(context),
             child: const Text('拍照'),
           )
         ],
@@ -50,31 +48,44 @@ class ImageSelect extends StatelessWidget {
   }
 
   /// 选择图片
-  void onSelectPhoto() async {
+  void onSelectPhoto(BuildContext context) async {
     Get.back();
-    List<XFile> pickedFile = await imagePicker.pickMultiImage();
-    if (pickedFile.isEmpty) {
+    final List<AssetEntity>? result = await AssetPicker.pickAssets(
+      context,
+      pickerConfig: AssetPickerConfig(
+        maxAssets: countLimit == -1 ? 99 : countLimit,
+        requestType: RequestType.image,
+      ),
+    );
+    if (result == null) {
       return;
+    }
+    // 将选择的图片路径保存
+    final List<String> pickedFile = [];
+    for (var i in result) {
+      final file = await i.file;
+      if (file != null) {
+        pickedFile.add(file.path);
+      }
     }
     onChange(pickedFile);
   }
 
   /// 选择拍照
-  void onSelectCamera() async {
+  void onSelectCamera(BuildContext context) async {
     Get.back();
     // 调用拍照
-    XFile? pickedFile = await imagePicker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 100,
-    );
-    if (pickedFile == null) {
+    final AssetEntity? result = await CameraPicker.pickFromCamera(context);
+    if (result == null) {
       return;
     }
-    // 将拍照的临时图片保存到手机
-    await ImageGallerySaver.saveFile(pickedFile.path);
-    List<XFile> list = [];
-    list.add(pickedFile);
-    onChange(list);
+    // 将拍照生成的图片路径保存
+    List<String> pickedFile = [];
+    final file = await result.file;
+    if (file != null) {
+      pickedFile.add(file.path);
+    }
+    onChange(pickedFile);
   }
 
   /// 取消
@@ -85,13 +96,14 @@ class ImageSelect extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTab,
+      onTap: () => onTab(context),
       splashColor: Colors.black.withOpacity(0.1),
       child: Container(
-        width: ScreenUtil().setWidth(boxSize),
-        height: ScreenUtil().setWidth(boxSize),
+        width: boxSize,
+        height: boxSize,
         alignment: Alignment.center,
         decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.1),
           border: Border.all(color: Colors.black.withOpacity(0.3)),
           borderRadius: BorderRadius.circular(8),
         ),

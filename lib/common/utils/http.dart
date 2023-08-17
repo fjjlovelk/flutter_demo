@@ -174,7 +174,8 @@ class HttpUtil {
     required Map<String, dynamic> data,
     Map<String, dynamic>? queryParameters,
     Options? options,
-    void Function(int, int)? onSendProgress,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
   }) async {
     Options requestOptions = options ?? Options();
     var response = await dio.post(
@@ -184,6 +185,7 @@ class HttpUtil {
       cancelToken: cancelToken,
       options: requestOptions,
       onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
     );
     return response.data;
   }

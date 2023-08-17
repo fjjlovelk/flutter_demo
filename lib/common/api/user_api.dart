@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_demo/common/models/file_model.dart';
 import 'package:flutter_demo/common/models/user_model.dart';
 import 'package:flutter_demo/common/utils/http.dart';
@@ -17,7 +18,7 @@ class UserApi {
   /// 文件上传
   static Future<FileModel> upload(
     Map<String, dynamic> data, {
-    void Function(int, int)? onSendProgress,
+    ProgressCallback? onSendProgress,
   }) async {
     var response = await HttpUtil().postForm(
       '/upload/single',

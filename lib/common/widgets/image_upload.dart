@@ -3,10 +3,15 @@ import 'package:flutter_demo/common/models/file_model.dart';
 import 'package:flutter_demo/common/utils/loading.dart';
 import 'package:flutter_demo/common/widgets/image_select.dart';
 import 'package:flutter_demo/common/widgets/image_upload_item.dart';
-import 'package:image_picker/image_picker.dart';
 
 class ImageUpload extends StatefulWidget {
   final List<FileModel>? items;
+
+  /// 每行个数
+  final int rowCount;
+
+  /// 间隔
+  final double spacing;
 
   /// 数量限制
   final int countLimit;
@@ -18,6 +23,8 @@ class ImageUpload extends StatefulWidget {
 
   const ImageUpload({
     Key? key,
+    this.rowCount = 4,
+    this.spacing = 8,
     this.countLimit = 5,
     this.sizeLimit = 2,
     required this.onChange,
@@ -34,6 +41,7 @@ class _ImageUploadState extends State<ImageUpload> {
 
   @override
   void initState() {
+    print('items----${widget.items}');
     if (widget.items != null) {
       _fileList =
           widget.items!.map((e) => FileModel.fromJson(e.toJson())).toList();
@@ -42,13 +50,13 @@ class _ImageUploadState extends State<ImageUpload> {
   }
 
   /// 选择照片/拍照 触发事件
-  void onChange(List<XFile> file) {
+  void onChange(List<String> file) {
     if (_fileList.length + file.length > widget.countLimit) {
       Loading.showInfo('最多只能选择${widget.countLimit}张图片');
       return;
     }
     for (var item in file) {
-      final fileModel = FileModel(data: item);
+      final fileModel = FileModel(assetPath: item);
       _fileList.add(fileModel);
     }
     widget.onChange.call(_fileList);
@@ -57,38 +65,54 @@ class _ImageUploadState extends State<ImageUpload> {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      children: [
-        ..._fileList
-            .map(
-              (e) => ImageUploadItem(
-                key: ObjectKey(e),
-                path: e.data?.path,
-                url: e.filepath,
-                onSuccess: (f) {
-                  e.filepath = f['filepath'];
-                  e.filename = f['filename'];
-                  widget.onChange.call(_fileList);
-                },
-                onError: () {
-                  _fileList.remove(e);
-                  widget.onChange.call(_fileList);
-                  setState(() {});
-                },
-                onLongPress: () {
-                  _fileList.remove(e);
-                  widget.onChange.call(_fileList);
-                  setState(() {});
-                },
-              ),
-            )
-            .toList(),
-        if (widget.countLimit != -1 && _fileList.length < widget.countLimit)
-          ImageSelect(
-            countLimit: widget.countLimit,
-            onChange: onChange,
-          ),
-      ],
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(widget.spacing),
+      child: LayoutBuilder(
+        builder: (_, constraints) {
+          final itemWidth =
+              ((constraints.maxWidth - widget.spacing * (widget.rowCount - 1)) /
+                  widget.rowCount);
+          return Wrap(
+            spacing: widget.spacing,
+            runSpacing: widget.spacing,
+            children: [
+              ..._fileList
+                  .map(
+                    (e) => ImageUploadItem(
+                      key: ObjectKey(e),
+                      path: e.assetPath,
+                      url: e.filepath,
+                      boxSize: itemWidth,
+                      onSuccess: (f) {
+                        e.filepath = f['filepath']!;
+                        e.filename = f['filename']!;
+                        widget.onChange.call(_fileList);
+                      },
+                      onError: () {
+                        _fileList.remove(e);
+                        widget.onChange.call(_fileList);
+                        setState(() {});
+                      },
+                      onLongPress: () {
+                        _fileList.remove(e);
+                        widget.onChange.call(_fileList);
+                        setState(() {});
+                      },
+                    ),
+                  )
+                  .toList(),
+              if (widget.countLimit != -1 &&
+                  _fileList.length < widget.countLimit)
+                ImageSelect(
+                  boxSize: itemWidth,
+                  countLimit: widget.countLimit,
+                  onChange: onChange,
+                ),
+            ],
+          );
+        },
+      ),
     );
   }
 }

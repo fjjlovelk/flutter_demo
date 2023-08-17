@@ -8,15 +8,24 @@ class HomePage extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+    print("HomePage----build");
     return Scaffold(
       appBar: AppBar(
         title: const Text('首页'),
       ),
-      body: ImageUpload(
-        // items: controller.state.fileList,
-        onChange: (file) {
-          // controller.state.fileList = file;
-        },
+      body: Column(
+        children: [
+          ImageUpload(
+            items: controller.state.fileList,
+            onChange: (file) {
+              print("file---$file");
+              controller.state.fileList = file;
+            },
+          ),
+          // ImagePreview(
+          //   imageItems: controller.state.fileList,
+          // ),
+        ],
       ),
     );
   }

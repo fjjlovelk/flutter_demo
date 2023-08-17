@@ -1,26 +1,26 @@
 // 用户信息
-import 'package:image_picker/image_picker.dart';
+
 
 class FileModel {
-  String? filepath;
-  String? filename;
-  XFile? data;
+  String filepath;
+  String filename;
+  String assetPath;
 
   FileModel({
     this.filepath = "",
     this.filename = "",
-    this.data,
+    this.assetPath = "",
   });
 
   factory FileModel.fromJson(Map<String, dynamic> json) => FileModel(
         filepath: json["filepath"] ?? '',
         filename: json["filename"] ?? '',
-        data: json["data"],
+        assetPath: json["assetPath"] ?? "",
       );
 
   Map<String, dynamic> toJson() => {
         "filepath": filepath,
         "filename": filename,
-        "data": data,
+        "assetPath": assetPath,
       };
 }
