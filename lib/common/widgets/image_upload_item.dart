@@ -1,24 +1,26 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/common/api/user_api.dart';
 import 'package:flutter_demo/common/enums/upload_state_enum.dart';
+import 'package:flutter_demo/common/models/file_model.dart';
+import 'package:flutter_demo/common/utils/file_util.dart';
+import 'package:flutter_demo/common/utils/loading.dart';
 import 'package:flutter_demo/common/widgets/remote_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class ImageUploadItem extends StatefulWidget {
   /// 盒子大小，默认80
   final double boxSize;
 
   /// 文件本地路径
-  final String path;
+  final AssetEntity? assetEntity;
 
   /// 文件网络路径
   final String url;
 
   /// 上传成功回调
-  final void Function(Map<String, String>) onSuccess;
+  final void Function(FileModel) onSuccess;
 
   /// 上传失败回调
   final void Function()? onError;
@@ -28,7 +30,7 @@ class ImageUploadItem extends StatefulWidget {
 
   const ImageUploadItem({
     Key? key,
-    required this.path,
+    this.assetEntity,
     required this.url,
     this.boxSize = 80,
     required this.onSuccess,
@@ -55,25 +57,36 @@ class _ImageUploadItemState extends State<ImageUploadItem> {
 
   /// 上传
   onUpload() async {
-    if (widget.url.isNotEmpty) {
+    // 编辑状态下，回显的数据不需要再次上传
+    if (widget.url.isNotEmpty || widget.assetEntity == null) {
       _isSuccess.value = UploadStateEnum.success;
       return;
     }
-    UserApi.upload(
-      {"singleFile": await MultipartFile.fromFile(widget.path)},
-      onSendProgress: (int count, int total) {
-        _progress.value = (count * 100 / total);
-      },
-    ).then((value) {
+    try {
+      final bytes = await widget.assetEntity!.originBytes;
+      if (bytes == null) {
+        Loading.showError(
+            'Unable to obtain file of the entity ${widget.assetEntity!.id}.');
+        return;
+      }
+      final compressedBytes = await FileUtil.compressImage(bytes);
+      final result = await UserApi.upload(
+        {
+          "singleFile": MultipartFile.fromBytes(
+            compressedBytes,
+            filename: widget.assetEntity!.title,
+          )
+        },
+        onSendProgress: (int count, int total) {
+          _progress.value = (count * 100 / total);
+        },
+      );
       _isSuccess.value = UploadStateEnum.success;
-      widget.onSuccess.call({
-        "filepath": value.filepath,
-        "filename": value.filename,
-      });
-    }).catchError((err) {
+      widget.onSuccess.call(result);
+    } catch (err) {
       _isSuccess.value = UploadStateEnum.fail;
       widget.onError?.call();
-    });
+    }
   }
 
   @override
@@ -87,7 +100,7 @@ class _ImageUploadItemState extends State<ImageUploadItem> {
           fit: StackFit.expand,
           children: [
             // const _ImageBackground(),
-            _ImageChild(path: widget.path, url: widget.url),
+            _ImageChild(assetEntity: widget.assetEntity, url: widget.url),
             AnimatedBuilder(
               animation: Listenable.merge([
                 _progress,
@@ -114,14 +127,14 @@ class _ImageUploadItemState extends State<ImageUploadItem> {
 /// image
 class _ImageChild extends StatelessWidget {
   /// 文件本地路径
-  final String path;
+  final AssetEntity? assetEntity;
 
   /// 文件网络路径
   final String url;
 
   const _ImageChild({
     Key? key,
-    required this.path,
+    this.assetEntity,
     required this.url,
   }) : super(key: key);
 
@@ -134,10 +147,11 @@ class _ImageChild extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: path.isNotEmpty
-            ? Image.file(
-                File(path),
-                gaplessPlayback: true,
+        // 优先展示本地图片
+        child: assetEntity != null
+            ? AssetEntityImage(
+                assetEntity!,
+                isOriginal: false,
                 fit: BoxFit.cover,
               )
             : RemoteImage(url: url),

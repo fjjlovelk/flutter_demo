@@ -3,6 +3,7 @@ import 'package:flutter_demo/common/models/file_model.dart';
 import 'package:flutter_demo/common/utils/loading.dart';
 import 'package:flutter_demo/common/widgets/image_select.dart';
 import 'package:flutter_demo/common/widgets/image_upload_item.dart';
+import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class ImageUpload extends StatefulWidget {
   final List<FileModel>? items;
@@ -50,13 +51,13 @@ class _ImageUploadState extends State<ImageUpload> {
   }
 
   /// 选择照片/拍照 触发事件
-  void onChange(List<String> file) {
+  void onChange(List<AssetEntity> file) {
     if (_fileList.length + file.length > widget.countLimit) {
       Loading.showInfo('最多只能选择${widget.countLimit}张图片');
       return;
     }
     for (var item in file) {
-      final fileModel = FileModel(assetPath: item);
+      final fileModel = FileModel(assetEntity: item);
       _fileList.add(fileModel);
     }
     widget.onChange.call(_fileList);
@@ -80,13 +81,14 @@ class _ImageUploadState extends State<ImageUpload> {
               ..._fileList
                   .map(
                     (e) => ImageUploadItem(
+                      // 加入ObjectKey，保证已有的组件不重新刷新
                       key: ObjectKey(e),
-                      path: e.assetPath,
+                      assetEntity: e.assetEntity,
                       url: e.filepath,
                       boxSize: itemWidth,
                       onSuccess: (f) {
-                        e.filepath = f['filepath']!;
-                        e.filename = f['filename']!;
+                        e.filepath = f.filepath;
+                        e.filename = f.filename;
                         widget.onChange.call(_fileList);
                       },
                       onError: () {

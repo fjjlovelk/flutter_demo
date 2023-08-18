@@ -16,7 +16,7 @@ class ImageSelect extends StatelessWidget {
   /// 已选选择图片数量
   final int selectedCount;
 
-  final void Function(List<String>) onChange;
+  final void Function(List<AssetEntity>) onChange;
 
   const ImageSelect({
     Key? key,
@@ -65,15 +65,7 @@ class ImageSelect extends StatelessWidget {
     if (result == null) {
       return;
     }
-    // 将选择的图片路径保存
-    final List<String> pickedFile = [];
-    for (var i in result) {
-      final file = await i.file;
-      if (file != null) {
-        pickedFile.add(file.path);
-      }
-    }
-    onChange(pickedFile);
+    onChange(result);
   }
 
   /// 选择拍照
@@ -85,11 +77,7 @@ class ImageSelect extends StatelessWidget {
       return;
     }
     // 将拍照生成的图片路径保存
-    List<String> pickedFile = [];
-    final file = await result.file;
-    if (file != null) {
-      pickedFile.add(file.path);
-    }
+    List<AssetEntity> pickedFile = [result];
     onChange(pickedFile);
   }
 

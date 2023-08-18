@@ -1,26 +1,26 @@
-// 用户信息
-
+// 文件信息
+import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class FileModel {
   String filepath;
   String filename;
-  String assetPath;
+  AssetEntity? assetEntity;
 
   FileModel({
     this.filepath = "",
     this.filename = "",
-    this.assetPath = "",
+    this.assetEntity,
   });
 
   factory FileModel.fromJson(Map<String, dynamic> json) => FileModel(
         filepath: json["filepath"] ?? '',
         filename: json["filename"] ?? '',
-        assetPath: json["assetPath"] ?? "",
+        assetEntity: json["assetEntity"],
       );
 
   Map<String, dynamic> toJson() => {
         "filepath": filepath,
         "filename": filename,
-        "assetPath": assetPath,
+        "assetEntity": assetEntity,
       };
 }

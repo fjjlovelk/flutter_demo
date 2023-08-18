@@ -39,6 +39,8 @@ dependencies:
   wechat_assets_picker: ^8.6.1
   # 微信风格的拍照/视频
   wechat_camera_picker: ^3.8.0
+  # 图片压缩
+  flutter_image_compress: ^2.0.4
 
 dev_dependencies:
   flutter_lints: ^2.0.0
