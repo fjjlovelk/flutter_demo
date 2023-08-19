@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class RemoteImage extends StatelessWidget {
+  /// 文件网络地址
   final String url;
 
   const RemoteImage({Key? key, required this.url}) : super(key: key);

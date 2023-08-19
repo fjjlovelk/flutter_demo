@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'package:wechat_camera_picker/wechat_camera_picker.dart';
@@ -98,12 +97,11 @@ class ImageSelect extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: Colors.black.withOpacity(0.1),
-          border: Border.all(color: Colors.black.withOpacity(0.3)),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
           Icons.add,
-          size: ScreenUtil().setWidth((boxSize / 3).truncate()),
+          size: (boxSize / 3).truncateToDouble(),
           color: Colors.black.withOpacity(0.3),
         ),
       ),

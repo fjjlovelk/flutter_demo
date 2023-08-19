@@ -16,15 +16,20 @@ class HomePage extends GetView<HomeController> {
       ),
       body: Column(
         children: [
-          ImageUpload(
-            items: controller.state.fileList,
-            onChange: (file) {
-              print("file---$file");
-              controller.state.fileList = file;
-            },
+          GetBuilder<HomeController>(
+            id: 'ImageUpload',
+            init: HomeController(),
+            builder: (_) => ImageUpload(
+              items: controller.state.fileList,
+              onChange: controller.onChange,
+            ),
           ),
-          ImagePreview(
-            imageItems: controller.state.fileList,
+          GetBuilder<HomeController>(
+            id: 'ImagePreview',
+            init: HomeController(),
+            builder: (_) => ImagePreview(
+              items: controller.state.fileList,
+            ),
           ),
         ],
       ),

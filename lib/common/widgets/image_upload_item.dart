@@ -5,9 +5,10 @@ import 'package:flutter_demo/common/enums/upload_state_enum.dart';
 import 'package:flutter_demo/common/models/file_model.dart';
 import 'package:flutter_demo/common/utils/file_util.dart';
 import 'package:flutter_demo/common/utils/loading.dart';
-import 'package:flutter_demo/common/widgets/remote_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
+
+import 'image_preview_item.dart';
 
 class ImageUploadItem extends StatefulWidget {
   /// 盒子大小，默认80
@@ -99,62 +100,36 @@ class _ImageUploadItemState extends State<ImageUploadItem> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // const _ImageBackground(),
-            _ImageChild(assetEntity: widget.assetEntity, url: widget.url),
+            ImagePreviewItem(assetEntity: widget.assetEntity, url: widget.url),
             AnimatedBuilder(
               animation: Listenable.merge([
                 _progress,
                 _isSuccess,
               ]),
               builder: (context, child) {
-                switch (_isSuccess.value) {
-                  case UploadStateEnum.uploading:
-                    return _UploadBackground(progress: _progress.value);
-                  case UploadStateEnum.success:
-                    return const SizedBox();
-                  case UploadStateEnum.fail:
-                    return const _FailedBackground();
+                if (_isSuccess.value == UploadStateEnum.success) {
+                  return const SizedBox();
                 }
+                return Positioned(
+                  top: 0,
+                  right: 0,
+                  bottom: 0,
+                  left: 0,
+                  child: Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.black45,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: _isSuccess.value == UploadStateEnum.uploading
+                        ? _UploadBackground(progress: _progress.value)
+                        : const _FailedBackground(),
+                  ),
+                );
               },
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-/// image
-class _ImageChild extends StatelessWidget {
-  /// 文件本地路径
-  final AssetEntity? assetEntity;
-
-  /// 文件网络路径
-  final String url;
-
-  const _ImageChild({
-    Key? key,
-    this.assetEntity,
-    required this.url,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        // 优先展示本地图片
-        child: assetEntity != null
-            ? AssetEntityImage(
-                assetEntity!,
-                isOriginal: false,
-                fit: BoxFit.cover,
-              )
-            : RemoteImage(url: url),
       ),
     );
   }
@@ -168,31 +143,18 @@ class _UploadBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 0,
-      child: Container(
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: Colors.black45,
-          borderRadius: BorderRadius.circular(8),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          "${progress.toStringAsFixed(2)}%",
+          style: const TextStyle(color: Colors.white),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              "${progress.toStringAsFixed(2)}%",
-              style: const TextStyle(color: Colors.white),
-            ),
-            Text(
-              "上传中",
-              style: TextStyle(color: Colors.white, fontSize: 14.sp),
-            ),
-          ],
+        Text(
+          "上传中",
+          style: TextStyle(color: Colors.white, fontSize: 14.sp),
         ),
-      ),
+      ],
     );
   }
 }
@@ -203,22 +165,9 @@ class _FailedBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 0,
-      child: Container(
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: Colors.black45,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: const Text(
-          "上传失败",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
+    return const Text(
+      "上传失败",
+      style: TextStyle(color: Colors.white),
     );
   }
 }

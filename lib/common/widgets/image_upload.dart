@@ -5,8 +5,12 @@ import 'package:flutter_demo/common/widgets/image_select.dart';
 import 'package:flutter_demo/common/widgets/image_upload_item.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
-class ImageUpload extends StatefulWidget {
-  final List<FileModel>? items;
+class ImageUpload extends StatelessWidget {
+  /// 文件列表
+  final List<FileModel> items;
+
+  /// 文件改变的回调
+  final void Function(List<FileModel>) onChange;
 
   /// 每行个数
   final int rowCount;
@@ -20,8 +24,6 @@ class ImageUpload extends StatefulWidget {
   /// 大小限制，单位：MB
   final int sizeLimit;
 
-  final void Function(List<FileModel>) onChange;
-
   const ImageUpload({
     Key? key,
     this.rowCount = 4,
@@ -29,93 +31,64 @@ class ImageUpload extends StatefulWidget {
     this.countLimit = 5,
     this.sizeLimit = 2,
     required this.onChange,
-    this.items,
+    required this.items,
   }) : super(key: key);
 
-  @override
-  State<ImageUpload> createState() => _ImageUploadState();
-}
-
-class _ImageUploadState extends State<ImageUpload> {
-  /// 文件列表
-  List<FileModel> _fileList = [];
-
-  @override
-  void initState() {
-    print('items----${widget.items}');
-    if (widget.items != null) {
-      _fileList =
-          widget.items!.map((e) => FileModel.fromJson(e.toJson())).toList();
-    }
-    super.initState();
-  }
-
   /// 选择照片/拍照 触发事件
-  void onChange(List<AssetEntity> file) {
-    if (_fileList.length + file.length > widget.countLimit) {
-      Loading.showInfo('最多只能选择${widget.countLimit}张图片');
+  void imageChange(List<AssetEntity> file) {
+    if (items.length + file.length > countLimit) {
+      Loading.showInfo('最多只能选择$countLimit张图片');
       return;
     }
+    final List<FileModel> list = [...items];
     for (var item in file) {
       final fileModel = FileModel(assetEntity: item);
-      _fileList.add(fileModel);
+      list.add(fileModel);
     }
-    widget.onChange.call(_fileList);
-    setState(() {});
+    onChange.call(list);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(widget.spacing),
-      child: LayoutBuilder(
-        builder: (_, constraints) {
-          final itemWidth =
-              ((constraints.maxWidth - widget.spacing * (widget.rowCount - 1)) /
-                  widget.rowCount);
-          return Wrap(
-            spacing: widget.spacing,
-            runSpacing: widget.spacing,
-            children: [
-              ..._fileList
-                  .map(
-                    (e) => ImageUploadItem(
-                      // 加入ObjectKey，保证已有的组件不重新刷新
-                      key: ObjectKey(e),
-                      assetEntity: e.assetEntity,
-                      url: e.filepath,
-                      boxSize: itemWidth,
-                      onSuccess: (f) {
-                        e.filepath = f.filepath;
-                        e.filename = f.filename;
-                        widget.onChange.call(_fileList);
-                      },
-                      onError: () {
-                        _fileList.remove(e);
-                        widget.onChange.call(_fileList);
-                        setState(() {});
-                      },
-                      onLongPress: () {
-                        _fileList.remove(e);
-                        widget.onChange.call(_fileList);
-                        setState(() {});
-                      },
-                    ),
-                  )
-                  .toList(),
-              if (widget.countLimit != -1 &&
-                  _fileList.length < widget.countLimit)
-                ImageSelect(
-                  boxSize: itemWidth,
-                  countLimit: widget.countLimit,
-                  selectedCount: _fileList.length,
-                  onChange: onChange,
-                ),
-            ],
-          );
-        },
+    final fileList = items.map((e) => FileModel.fromJson(e.toJson())).toList();
+    final noPlusIcon = countLimit != -1 && fileList.length == countLimit;
+    return GridView.builder(
+      shrinkWrap: true,
+      padding: EdgeInsets.all(spacing),
+      itemCount: fileList.length + (noPlusIcon ? 0 : 1),
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: rowCount,
+        mainAxisSpacing: spacing,
+        crossAxisSpacing: spacing,
       ),
+      itemBuilder: (_, index) {
+        if (!noPlusIcon && index == fileList.length) {
+          return ImageSelect(
+            countLimit: countLimit,
+            selectedCount: fileList.length,
+            onChange: imageChange,
+          );
+        }
+        final e = fileList[index];
+        return ImageUploadItem(
+          assetEntity: e.assetEntity,
+          url: e.filepath,
+          onSuccess: (f) {
+            e.filepath = f.filepath;
+            e.filename = f.filename;
+            onChange.call(fileList);
+          },
+          onError: () {
+            fileList.remove(e);
+            onChange.call(fileList);
+          },
+          onLongPress: () {
+            fileList.remove(e);
+            onChange.call(fileList);
+          },
+        );
+      },
     );
   }
 }

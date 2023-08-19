@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/common/models/file_model.dart';
-import 'package:flutter_demo/common/widgets/remote_image.dart';
+import 'package:flutter_demo/common/widgets/image_preview_item.dart';
 import 'package:get/get.dart';
 
 import 'image_preview_page.dart';
 
 class ImagePreview extends StatelessWidget {
   /// 图片列表
-  final List<FileModel> imageItems;
+  final List<FileModel> items;
 
   /// 每行个数
   final int rowCount;
@@ -17,15 +17,18 @@ class ImagePreview extends StatelessWidget {
 
   const ImagePreview({
     Key? key,
-    required this.imageItems,
+    required this.items,
     this.rowCount = 4,
     this.spacing = 8,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    print("image_preview-----items-----$items");
+    final imageItems = items.where((e) => e.filepath.isNotEmpty).toList();
     return GridView.builder(
       shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: imageItems.length,
       padding: EdgeInsets.all(spacing),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -44,10 +47,7 @@ class ImagePreview extends StatelessWidget {
               transition: Transition.zoom,
             );
           },
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: RemoteImage(url: imageItems[index].filepath),
-          ),
+          child: ImagePreviewItem(url: imageItems[index].filepath),
         );
       },
     );
