@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/common/models/file_model.dart';
 import 'package:flutter_demo/common/utils/loading.dart';
@@ -83,7 +84,8 @@ class ImageUpload extends StatelessWidget {
             fileList.remove(e);
             onChange.call(fileList);
           },
-          onLongPress: () {
+          onLongPress: (CancelToken cancelToken) {
+            cancelToken.cancel();
             fileList.remove(e);
             onChange.call(fileList);
           },

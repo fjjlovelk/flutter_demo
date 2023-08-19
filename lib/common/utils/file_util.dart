@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/common/widgets/image_preview_page.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
@@ -34,11 +35,30 @@ class FileUtil {
         size = result.length / 1024 / 1024;
         count++;
       }
-      debugPrint("压缩了多少次：$count");
-      debugPrint("压缩后图片的大小：$size");
+      debugPrint("压缩后图片的大小：$size---------压缩了$count次");
       return result;
     } catch (err) {
       throw StateError('图片压缩失败');
     }
+  }
+
+  /// 预览图片大图
+  static void previewImage(
+    BuildContext context, {
+    required List<String> imageItems,
+    int currentIndex = 0,
+  }) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 50),
+        pageBuilder: (_, __, ___) => ImagePreviewPage(
+          imageItems: imageItems,
+          currentIndex: currentIndex,
+        ),
+        transitionsBuilder: (_, Animation<double> animation, __, Widget child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    );
   }
 }

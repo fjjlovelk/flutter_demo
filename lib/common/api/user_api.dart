@@ -19,11 +19,13 @@ class UserApi {
   static Future<FileModel> upload(
     Map<String, dynamic> data, {
     ProgressCallback? onSendProgress,
+    CancelToken? cancelToken,
   }) async {
     var response = await HttpUtil().postForm(
       '/upload/single',
       data: data,
       onSendProgress: onSendProgress,
+      cancelToken: cancelToken,
     );
     return FileModel.fromJson(response);
   }

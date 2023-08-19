@@ -11,8 +11,6 @@ class HttpUtil {
 
   late Dio dio;
 
-  CancelToken cancelToken = CancelToken();
-
   HttpUtil._internal() {
     // 初始化
     BaseOptions options = BaseOptions(
@@ -73,17 +71,13 @@ class HttpUtil {
     }
   }
 
-  /// 取消请求
-  void cancelRequest() {
-    cancelToken.cancel('cancelled');
-  }
-
   /// get方法
   Future get(
     String path, {
     Object? data,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    CancelToken? cancelToken,
   }) async {
     Options requestOptions = options ?? Options();
     var response = await dio.get(
@@ -102,6 +96,7 @@ class HttpUtil {
     Object? data,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    CancelToken? cancelToken,
   }) async {
     Options requestOptions = options ?? Options();
     var response = await dio.post(
@@ -120,6 +115,7 @@ class HttpUtil {
     Object? data,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    CancelToken? cancelToken,
   }) async {
     Options requestOptions = options ?? Options();
     var response = await dio.put(
@@ -138,6 +134,7 @@ class HttpUtil {
     Object? data,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    CancelToken? cancelToken,
   }) async {
     Options requestOptions = options ?? Options();
     var response = await dio.patch(
@@ -156,6 +153,7 @@ class HttpUtil {
     Object? data,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    CancelToken? cancelToken,
   }) async {
     Options requestOptions = options ?? Options();
     var response = await dio.delete(
@@ -176,6 +174,7 @@ class HttpUtil {
     Options? options,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
+    CancelToken? cancelToken,
   }) async {
     Options requestOptions = options ?? Options();
     var response = await dio.post(

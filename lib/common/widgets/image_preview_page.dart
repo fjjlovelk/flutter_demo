@@ -55,6 +55,12 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
   }
 
   @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
@@ -73,6 +79,9 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
           wantKeepAlive: true,
           builder: (BuildContext context, int index) {
             return PhotoViewGalleryPageOptions(
+              // heroAttributes: PhotoViewHeroAttributes(
+              //   tag: widget.imageItems[index],
+              // ),
               imageProvider: CachedNetworkImageProvider(
                 widget.imageItems[index],
               ),

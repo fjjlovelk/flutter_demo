@@ -6,7 +6,7 @@ import 'package:flutter_demo/common/models/file_model.dart';
 import 'package:flutter_demo/common/utils/file_util.dart';
 import 'package:flutter_demo/common/utils/loading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:wechat_assets_picker/wechat_assets_picker.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 import 'image_preview_item.dart';
 
@@ -27,7 +27,7 @@ class ImageUploadItem extends StatefulWidget {
   final void Function()? onError;
 
   /// 长按回调
-  final void Function()? onLongPress;
+  final void Function(CancelToken)? onLongPress;
 
   const ImageUploadItem({
     Key? key,
@@ -50,6 +50,9 @@ class _ImageUploadItemState extends State<ImageUploadItem> {
   /// 上传进度
   final _progress = ValueNotifier(0.0);
 
+  /// 取消请求
+  final CancelToken _cancelToken = CancelToken();
+
   @override
   void initState() {
     super.initState();
@@ -70,6 +73,7 @@ class _ImageUploadItemState extends State<ImageUploadItem> {
             'Unable to obtain file of the entity ${widget.assetEntity!.id}.');
         return;
       }
+      // 压缩图片
       final compressedBytes = await FileUtil.compressImage(bytes);
       final result = await UserApi.upload(
         {
@@ -81,6 +85,7 @@ class _ImageUploadItemState extends State<ImageUploadItem> {
         onSendProgress: (int count, int total) {
           _progress.value = (count * 100 / total);
         },
+        cancelToken: _cancelToken,
       );
       _isSuccess.value = UploadStateEnum.success;
       widget.onSuccess.call(result);
@@ -93,7 +98,7 @@ class _ImageUploadItemState extends State<ImageUploadItem> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onLongPress: widget.onLongPress,
+      onLongPress: () => widget.onLongPress?.call(_cancelToken),
       child: SizedBox(
         width: widget.boxSize,
         height: widget.boxSize,

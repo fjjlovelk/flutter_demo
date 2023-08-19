@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/common/utils/loading.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
-import 'package:wechat_camera_picker/wechat_camera_picker.dart';
 
 /// FileUpload中的加号
 class ImageSelect extends StatelessWidget {
+  final ImagePicker _picker = ImagePicker();
+
   /// 盒子大小，默认80
   final double boxSize;
 
@@ -17,7 +20,7 @@ class ImageSelect extends StatelessWidget {
 
   final void Function(List<AssetEntity>) onChange;
 
-  const ImageSelect({
+  ImageSelect({
     Key? key,
     this.boxSize = 80,
     this.countLimit = -1,
@@ -71,8 +74,18 @@ class ImageSelect extends StatelessWidget {
   void onSelectCamera(BuildContext context) async {
     Get.back();
     // 调用拍照
-    final AssetEntity? result = await CameraPicker.pickFromCamera(context);
+    final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
+    if (photo == null) {
+      return;
+    }
+    final bytes = await photo.readAsBytes();
+    // 将photo保存到设备，并获得AssetEntity
+    final AssetEntity? result = await PhotoManager.editor.saveImage(
+      bytes,
+      title: photo.name, // 可能影响 EXIF 信息的读取
+    );
     if (result == null) {
+      Loading.showError("图片保存失败");
       return;
     }
     // 将拍照生成的图片路径保存

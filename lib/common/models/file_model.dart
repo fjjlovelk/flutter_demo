@@ -1,5 +1,4 @@
-// 文件信息
-import 'package:wechat_assets_picker/wechat_assets_picker.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 class FileModel {
   String filepath;
