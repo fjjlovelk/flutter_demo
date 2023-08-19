@@ -50,6 +50,9 @@ class _ImageUploadItemState extends State<ImageUploadItem> {
   /// 上传进度
   final _progress = ValueNotifier(0.0);
 
+  /// 压缩是否取消
+  final _cancelCompress = ValueNotifier(false);
+
   /// 取消请求
   final CancelToken _cancelToken = CancelToken();
 
@@ -57,6 +60,15 @@ class _ImageUploadItemState extends State<ImageUploadItem> {
   void initState() {
     super.initState();
     onUpload();
+  }
+
+  @override
+  void dispose() {
+    _cancelCompress.value = true;
+    _cancelCompress.dispose();
+    _isSuccess.dispose();
+    _progress.dispose();
+    super.dispose();
   }
 
   /// 上传
@@ -74,7 +86,14 @@ class _ImageUploadItemState extends State<ImageUploadItem> {
         return;
       }
       // 压缩图片
-      final compressedBytes = await FileUtil.compressImage(bytes);
+      final compressedBytes = await FileUtil.compressImage(
+        bytes,
+        cancelCompress: _cancelCompress,
+      );
+      // 压缩已终止
+      if (_cancelCompress.value) {
+        return;
+      }
       final result = await UserApi.upload(
         {
           "singleFile": MultipartFile.fromBytes(
@@ -90,6 +109,7 @@ class _ImageUploadItemState extends State<ImageUploadItem> {
       _isSuccess.value = UploadStateEnum.success;
       widget.onSuccess.call(result);
     } catch (err) {
+      debugPrint("onUpload----------${err.toString()}");
       _isSuccess.value = UploadStateEnum.fail;
       widget.onError?.call();
     }

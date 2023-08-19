@@ -22,18 +22,27 @@ class FileUtil {
   }
 
   /// 图片压缩 -- [bytes] 文件字节；[targetSize] 目标大小，默认1，单位：Mb
-  static Future<Uint8List> compressImage(Uint8List bytes,
-      [double targetSize = 1]) async {
+  static Future<Uint8List> compressImage(
+    Uint8List bytes, {
+    double targetSize = 1,
+    ValueNotifier<bool>? cancelCompress,
+  }) async {
     try {
       double size = bytes.length / 1024 / 1024;
       debugPrint("压缩前图片的大小：$size");
       Uint8List result = bytes;
       int count = 0;
+      int quality = 90;
       while (size > targetSize) {
-        result =
-            await FlutterImageCompress.compressWithList(result, quality: 90);
+        if (cancelCompress != null && cancelCompress.value) {
+          break;
+        }
+        result = await FlutterImageCompress.compressWithList(result,
+            quality: quality);
         size = result.length / 1024 / 1024;
         count++;
+        quality -= 15;
+        debugPrint("图片压缩count---------$count");
       }
       debugPrint("压缩后图片的大小：$size---------压缩了$count次");
       return result;

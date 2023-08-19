@@ -27,15 +27,19 @@ class ImagePreviewPage extends StatefulWidget {
   /// 是否显示顶部数字栏
   final bool showAppBar;
 
+  /// 是否显示底部指示器
+  final bool showBottomIndicator;
+
   const ImagePreviewPage({
     Key? key,
     required this.imageItems,
-    this.currentIndex = 1,
+    this.currentIndex = 0,
     this.pageController,
     this.initialScale = 1.0,
     this.maxScale = 2.0,
     this.minScale = 1.0,
     this.showAppBar = true,
+    this.showBottomIndicator = true,
   }) : super(key: key);
 
   @override
@@ -57,6 +61,7 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
   @override
   void dispose() {
     _pageController.dispose();
+    _currentIndex.dispose();
     super.dispose();
   }
 
@@ -67,22 +72,26 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
-        title: ValueListenableBuilder(
-          valueListenable: _currentIndex,
-          builder: (context, value, child) => Text(
-            '${value + 1}/${widget.imageItems.length}',
-            style: const TextStyle(color: Colors.white, fontSize: 20),
-          ),
-        ),
+        title: widget.showAppBar
+            ? ValueListenableBuilder(
+                valueListenable: _currentIndex,
+                builder: (context, value, child) => Text(
+                  '${value + 1}/${widget.imageItems.length}',
+                  style: const TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              )
+            : null,
       ),
       backgroundColor: Colors.black,
-      floatingActionButton: ValueListenableBuilder(
-        valueListenable: _currentIndex,
-        builder: (context, value, child) => _PageBottom(
-          length: widget.imageItems.length,
-          currentIndex: value,
-        ),
-      ),
+      floatingActionButton: widget.showBottomIndicator
+          ? ValueListenableBuilder(
+              valueListenable: _currentIndex,
+              builder: (context, value, child) => _BottomIndicator(
+                length: widget.imageItems.length,
+                currentIndex: value,
+              ),
+            )
+          : null,
       floatingActionButtonLocation:
           FloatingActionButtonLocation.miniCenterFloat,
       body: GestureDetector(
@@ -122,10 +131,10 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
 }
 
 /// 底部的指示器
-class _PageBottom extends StatelessWidget {
+class _BottomIndicator extends StatelessWidget {
   final int length;
   final int currentIndex;
-  const _PageBottom({
+  const _BottomIndicator({
     Key? key,
     required this.length,
     required this.currentIndex,

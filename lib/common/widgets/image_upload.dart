@@ -73,6 +73,8 @@ class ImageUpload extends StatelessWidget {
         }
         final e = fileList[index];
         return ImageUploadItem(
+          key: ValueKey<String>(
+              e.filepath.isNotEmpty ? e.filepath : (e.assetEntity?.id ?? '')),
           assetEntity: e.assetEntity,
           url: e.filepath,
           onSuccess: (f) {
