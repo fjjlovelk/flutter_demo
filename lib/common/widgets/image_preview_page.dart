@@ -63,15 +63,28 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
+        title: ValueListenableBuilder(
+          valueListenable: _currentIndex,
+          builder: (context, value, child) => Text(
+            '${value + 1}/${widget.imageItems.length}',
+            style: const TextStyle(color: Colors.white, fontSize: 20),
+          ),
+        ),
+      ),
       backgroundColor: Colors.black,
       floatingActionButton: ValueListenableBuilder(
         valueListenable: _currentIndex,
-        builder: (context, value, child) => Text(
-          '${value + 1}/${widget.imageItems.length}',
-          style: const TextStyle(color: Colors.white, fontSize: 20),
+        builder: (context, value, child) => _PageBottom(
+          length: widget.imageItems.length,
+          currentIndex: value,
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.miniCenterFloat,
       body: GestureDetector(
         onTap: () => Get.back(),
         onVerticalDragEnd: (_) => Get.back(),
@@ -102,6 +115,34 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
           pageController: _pageController,
           backgroundDecoration: const BoxDecoration(color: Colors.black),
           onPageChanged: (v) => _currentIndex.value = v,
+        ),
+      ),
+    );
+  }
+}
+
+/// 底部的指示器
+class _PageBottom extends StatelessWidget {
+  final int length;
+  final int currentIndex;
+  const _PageBottom({
+    Key? key,
+    required this.length,
+    required this.currentIndex,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(
+        length,
+        (index) => Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: CircleAvatar(
+            radius: 4,
+            backgroundColor: currentIndex == index ? Colors.white : Colors.grey,
+          ),
         ),
       ),
     );
