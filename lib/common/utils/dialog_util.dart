@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_demo/common/utils/loading.dart';
+import 'package:flutter_demo/common/utils/loading_util.dart';
 import 'package:get/get.dart';
 
 class DialogUtil {
@@ -17,7 +17,7 @@ class DialogUtil {
     void Function()? onConfirm,
   }) {
     if (Get.context == null) {
-      Loading.showError('context有误！');
+      LoadingUtil.showError('context有误！');
       return;
     }
     List<CupertinoButton> actions = [];

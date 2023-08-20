@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/common/models/file_model.dart';
-import 'package:flutter_demo/common/utils/loading.dart';
+import 'package:flutter_demo/common/utils/loading_util.dart';
 import 'package:flutter_demo/common/widgets/image_select.dart';
 import 'package:flutter_demo/common/widgets/image_upload_item.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
@@ -38,7 +38,7 @@ class ImageUpload extends StatelessWidget {
   /// 选择照片/拍照 触发事件
   void imageChange(List<AssetEntity> file) {
     if (items.length + file.length > countLimit) {
-      Loading.showInfo('最多只能选择$countLimit张图片');
+      LoadingUtil.showInfo('最多只能选择$countLimit张图片');
       return;
     }
     final List<FileModel> list = [...items];

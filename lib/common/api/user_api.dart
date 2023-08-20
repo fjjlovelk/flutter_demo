@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_demo/common/models/file_model.dart';
 import 'package:flutter_demo/common/models/user_model.dart';
-import 'package:flutter_demo/common/utils/http.dart';
+import 'package:flutter_demo/common/utils/http_util.dart';
 
 class UserApi {
   /// 登录

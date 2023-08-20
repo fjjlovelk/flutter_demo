@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/common/utils/keep_alive_wrapper.dart';
+import 'package:flutter_demo/common/widgets/keep_alive_wrapper.dart';
 import 'package:flutter_demo/pages/home/view.dart';
 import 'package:flutter_demo/pages/mine/view.dart';
 import 'package:get/get.dart';

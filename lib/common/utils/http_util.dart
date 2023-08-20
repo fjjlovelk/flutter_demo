@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_demo/common/config/http_config.dart';
-import 'package:flutter_demo/common/store/user.dart';
-import 'package:flutter_demo/common/utils/loading.dart';
+import 'package:flutter_demo/common/store/user_store.dart';
+import 'package:flutter_demo/common/utils/loading_util.dart';
 import 'package:get/get.dart' as getx;
 
 class HttpUtil {
@@ -45,26 +45,26 @@ class HttpUtil {
     print('onError---${err.toString()}');
     switch (err.type) {
       case DioExceptionType.connectionTimeout:
-        Loading.showError('连接超时');
+        LoadingUtil.showError('连接超时');
         break;
       case DioExceptionType.sendTimeout:
-        Loading.showError('请求超时');
+        LoadingUtil.showError('请求超时');
         break;
       case DioExceptionType.receiveTimeout:
-        Loading.showError('响应超时');
+        LoadingUtil.showError('响应超时');
         break;
       case DioExceptionType.badCertificate:
-        Loading.showError('证书错误');
+        LoadingUtil.showError('证书错误');
         break;
       case DioExceptionType.connectionError:
-        Loading.showError('连接错误');
+        LoadingUtil.showError('连接错误');
         break;
       case DioExceptionType.unknown:
         // 当err.type为unknown时err.error通常不为null
-        Loading.showError(err.error?.toString() ?? '未知错误');
+        LoadingUtil.showError(err.error?.toString() ?? '未知错误');
         break;
       case DioExceptionType.badResponse:
-        Loading.showError(err.message ?? '服务器错误');
+        LoadingUtil.showError(err.message ?? '服务器错误');
         break;
       default:
         break;

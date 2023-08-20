@@ -4,7 +4,7 @@ import 'package:flutter_demo/common/api/user_api.dart';
 import 'package:flutter_demo/common/enums/upload_state_enum.dart';
 import 'package:flutter_demo/common/models/file_model.dart';
 import 'package:flutter_demo/common/utils/file_util.dart';
-import 'package:flutter_demo/common/utils/loading.dart';
+import 'package:flutter_demo/common/utils/loading_util.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:photo_manager/photo_manager.dart';
 
@@ -81,7 +81,7 @@ class _ImageUploadItemState extends State<ImageUploadItem> {
     try {
       final bytes = await widget.assetEntity!.originBytes;
       if (bytes == null) {
-        Loading.showError(
+        LoadingUtil.showError(
             'Unable to obtain file of the entity ${widget.assetEntity!.id}.');
         return;
       }

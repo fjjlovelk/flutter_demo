@@ -1,4 +1,4 @@
-import 'package:flutter_demo/common/store/user.dart';
+import 'package:flutter_demo/common/store/user_store.dart';
 import 'package:get/get.dart';
 
 import 'state.dart';

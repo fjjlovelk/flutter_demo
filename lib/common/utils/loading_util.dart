@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
-class Loading {
-  Loading() {
+class LoadingUtil {
+  LoadingUtil() {
     EasyLoading.instance
       ..displayDuration = const Duration(milliseconds: 1000)
       ..indicatorType = EasyLoadingIndicatorType.ring

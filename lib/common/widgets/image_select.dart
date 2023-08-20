@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/common/utils/loading.dart';
+import 'package:flutter_demo/common/utils/loading_util.dart';
+import 'package:flutter_demo/common/utils/permission_util.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
@@ -35,13 +36,13 @@ class ImageSelect extends StatelessWidget {
       builder: (_) => CupertinoActionSheet(
         actions: [
           CupertinoActionSheetAction(
-            onPressed: () => onSelectPhoto(context),
+            onPressed: () => onSelectPhoto(),
             child: countLimit == -1
                 ? const Text('图片')
                 : Text('图片 (最多$countLimit张)'),
           ),
           CupertinoActionSheetAction(
-            onPressed: () => onSelectCamera(context),
+            onPressed: () => onSelectCamera(),
             child: const Text('拍照'),
           )
         ],
@@ -54,10 +55,21 @@ class ImageSelect extends StatelessWidget {
   }
 
   /// 选择图片
-  void onSelectPhoto(BuildContext context) async {
+  void onSelectPhoto() async {
     Get.back();
+    // 请求相册权限
+    bool isPhotosGranted = await PermissionUtil.photos();
+    if (!isPhotosGranted) {
+      return;
+    }
+    // 媒体位置权限
+    bool isAccessMediaLocationGranted =
+        await PermissionUtil.accessMediaLocation();
+    if (!isAccessMediaLocationGranted) {
+      return;
+    }
     final List<AssetEntity>? result = await AssetPicker.pickAssets(
-      context,
+      Get.context!,
       pickerConfig: AssetPickerConfig(
         maxAssets: (countLimit == -1 ? 99 : countLimit) - selectedCount,
         requestType: RequestType.image,
@@ -71,8 +83,18 @@ class ImageSelect extends StatelessWidget {
   }
 
   /// 选择拍照
-  void onSelectCamera(BuildContext context) async {
+  void onSelectCamera() async {
     Get.back();
+    // 请求摄像头权限
+    bool isCameraGranted = await PermissionUtil.camera();
+    if (!isCameraGranted) {
+      return;
+    }
+    // 请求存储权限
+    bool isStorageGranted = await PermissionUtil.storage();
+    if (!isStorageGranted) {
+      return;
+    }
     // 调用拍照
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
     if (photo == null) {
@@ -85,7 +107,7 @@ class ImageSelect extends StatelessWidget {
       title: photo.name, // 可能影响 EXIF 信息的读取
     );
     if (result == null) {
-      Loading.showError("图片保存失败");
+      LoadingUtil.showError("图片保存失败");
       return;
     }
     // 将拍照生成的图片路径保存

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_demo/common/services/storage_service.dart';
-import 'package:flutter_demo/common/store/user.dart';
-import 'package:flutter_demo/common/utils/loading.dart';
+import 'package:flutter_demo/common/store/user_store.dart';
+import 'package:flutter_demo/common/utils/loading_util.dart';
 import 'package:get/get.dart';
 
 /// 全局静态数据
@@ -16,7 +16,7 @@ class Global {
     // 设置系统UI
     setSystemUi();
     // 加载loading实例
-    Loading();
+    LoadingUtil();
     // 注入StorageService
     await Get.putAsync<StorageService>(() => StorageService().init());
     // 注入UserStore

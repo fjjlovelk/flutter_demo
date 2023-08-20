@@ -4,7 +4,7 @@ import 'package:flutter_demo/common/enums/storage_enum.dart';
 import 'package:flutter_demo/common/models/user_model.dart';
 import 'package:flutter_demo/common/router/app_routes.dart';
 import 'package:flutter_demo/common/services/storage_service.dart';
-import 'package:flutter_demo/common/utils/loading.dart';
+import 'package:flutter_demo/common/utils/loading_util.dart';
 import 'package:get/get.dart';
 
 class UserStore extends GetxController {
@@ -66,7 +66,7 @@ class UserStore extends GetxController {
       StorageService.to.setString(StorageEnum.userInfo.name, jsonEncode(u));
       StorageService.to.setString(StorageEnum.tokenKey.name, _token.value);
       StorageService.to.setBool(StorageEnum.isLogin.name, _isLogin.value);
-      Loading.showSuccess('登录成功');
+      LoadingUtil.showSuccess('登录成功');
       Get.offAndToNamed(AppRoutes.tabs);
     } catch (e) {
       print('login---$e');
@@ -90,7 +90,7 @@ class UserStore extends GetxController {
       StorageService.to.setString(StorageEnum.userInfo.name, jsonEncode(u));
       StorageService.to.setString(StorageEnum.tokenKey.name, _token.value);
       StorageService.to.setBool(StorageEnum.isLogin.name, _isLogin.value);
-      Loading.showSuccess('退出成功');
+      LoadingUtil.showSuccess('退出成功');
       Get.offAndToNamed(AppRoutes.login);
     } catch (e) {
       print('logout---$e');
