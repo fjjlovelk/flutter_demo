@@ -24,7 +24,7 @@ class FileUtil {
   /// 图片压缩 -- [bytes] 文件字节；[targetSize] 目标大小，默认1，单位：Mb
   static Future<Uint8List> compressImage(
     Uint8List bytes, {
-    double targetSize = 1,
+    int targetSize = 1,
     ValueNotifier<bool>? cancelCompress,
   }) async {
     try {

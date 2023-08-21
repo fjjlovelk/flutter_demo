@@ -1,8 +1,6 @@
-import 'dart:io';
-
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_demo/common/utils/loading_util.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class PermissionUtil {
   /// 请求权限
@@ -40,15 +38,22 @@ class PermissionUtil {
 
   /// 相册 权限检查和请求
   static Future<bool> photos({String message = '暂无相册权限，请前往设置开启权限'}) async {
-    Permission permission = Permission.photos;
-    if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await DeviceInfoPlugin().androidInfo;
-      if (androidInfo.version.sdkInt < 33) {
-        permission = Permission.storage;
-      }
+    try {
+      await AssetPicker.permissionCheck();
+      return true;
+    } catch (e) {
+      LoadingUtil.showInfo(message);
+      return false;
     }
-    bool isGranted = await _requestPermission(permission, message);
-    return isGranted;
+    // Permission permission = Permission.photos;
+    // if (Platform.isAndroid) {
+    //   AndroidDeviceInfo androidInfo = await DeviceInfoPlugin().androidInfo;
+    //   if (androidInfo.version.sdkInt < 33) {
+    //     permission = Permission.storage;
+    //   }
+    // }
+    // bool isGranted = await _requestPermission(permission, message);
+    // return isGranted;
   }
 
   /// 相机 权限检查和请求

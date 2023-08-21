@@ -62,7 +62,7 @@ class ImageSelect extends StatelessWidget {
     if (!isPhotosGranted) {
       return;
     }
-    // 媒体位置权限
+    // 请求相册位置权限
     bool isAccessMediaLocationGranted =
         await PermissionUtil.accessMediaLocation();
     if (!isAccessMediaLocationGranted) {
@@ -85,14 +85,15 @@ class ImageSelect extends StatelessWidget {
   /// 选择拍照
   void onSelectCamera() async {
     Get.back();
-    // 请求摄像头权限
-    bool isCameraGranted = await PermissionUtil.camera();
-    if (!isCameraGranted) {
+    // 请求相册权限
+    bool isPhotosGranted = await PermissionUtil.photos();
+    if (!isPhotosGranted) {
       return;
     }
-    // 请求存储权限
-    bool isStorageGranted = await PermissionUtil.storage();
-    if (!isStorageGranted) {
+    // 请求相册位置权限
+    bool isAccessMediaLocationGranted =
+        await PermissionUtil.accessMediaLocation();
+    if (!isAccessMediaLocationGranted) {
       return;
     }
     // 调用拍照

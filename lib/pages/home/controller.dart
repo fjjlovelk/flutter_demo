@@ -18,17 +18,14 @@ class HomeController extends GetxController {
     Future.delayed(const Duration(seconds: 2), () {
       final list = [
         FileModel(
-          filename: '673994',
-          filepath: 'http://192.168.3.25:8000/uploads/1692364263395-673994.png',
-        ),
-        FileModel(
-          filename: '15-53-05-005',
+          filename: 'pexels-andras-stefuca-18003658.jpg',
           filepath:
-              'http://192.168.3.25:8000/uploads/1692364278346-15-53-05-005.jpg',
+              "http://172.20.10.6:4396/uploads/1692583554882-pexels-andras-stefuca-18003658.jpg",
         ),
         FileModel(
-          filename: '1111',
-          filepath: 'http://192.168.3.25:8000/uploads/1692364278589-1111.jpg',
+          filename: "pexels-kelly-17333445.jpg",
+          filepath:
+              "http://172.20.10.6:4396/uploads/1692583767650-pexels-kelly-17333445.jpg",
         ),
       ];
       state.fileList.value = list;

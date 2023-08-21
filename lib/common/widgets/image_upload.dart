@@ -30,7 +30,7 @@ class ImageUpload extends StatelessWidget {
     this.rowCount = 4,
     this.spacing = 8,
     this.countLimit = 5,
-    this.sizeLimit = 2,
+    this.sizeLimit = 1,
     required this.onChange,
     required this.items,
   }) : super(key: key);
@@ -77,6 +77,7 @@ class ImageUpload extends StatelessWidget {
               e.filepath.isNotEmpty ? e.filepath : (e.assetEntity?.id ?? '')),
           assetEntity: e.assetEntity,
           url: e.filepath,
+          sizeLimit: sizeLimit,
           onSuccess: (f) {
             e.filepath = f.filepath;
             e.filename = f.filename;

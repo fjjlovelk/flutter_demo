@@ -20,6 +20,9 @@ class ImageUploadItem extends StatefulWidget {
   /// 文件网络路径
   final String url;
 
+  /// 大小限制，单位：MB
+  final int sizeLimit;
+
   /// 上传成功回调
   final void Function(FileModel) onSuccess;
 
@@ -34,6 +37,7 @@ class ImageUploadItem extends StatefulWidget {
     this.assetEntity,
     required this.url,
     this.boxSize = 80,
+    this.sizeLimit = 1,
     required this.onSuccess,
     this.onError,
     this.onLongPress,
@@ -88,6 +92,7 @@ class _ImageUploadItemState extends State<ImageUploadItem> {
       // 压缩图片
       final compressedBytes = await FileUtil.compressImage(
         bytes,
+        targetSize: widget.sizeLimit,
         cancelCompress: _cancelCompress,
       );
       // 压缩已终止
