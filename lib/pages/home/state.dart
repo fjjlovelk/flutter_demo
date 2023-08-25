@@ -1,6 +1,5 @@
-import 'package:flutter_demo/common/models/file_model.dart';
-import 'package:get/get.dart';
+import 'package:flutter_demo/common/widgets/image_upload.dart';
 
 class HomeState {
-  late RxList<FileModel> fileList = <FileModel>[].obs;
+  final ImageUploadController imageUploadController = ImageUploadController();
 }

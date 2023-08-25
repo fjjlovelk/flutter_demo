@@ -10,4 +10,7 @@ class AppRoutes {
 
   /// 登录页
   static const String login = '/login';
+
+  /// 上拉刷新，下拉加载
+  static const String pullRefresh = '/pullRefresh';
 }

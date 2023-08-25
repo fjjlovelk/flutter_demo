@@ -28,15 +28,8 @@ class HomeController extends GetxController {
               "http://172.20.10.6:4396/uploads/1692583767650-pexels-kelly-17333445.jpg",
         ),
       ];
-      state.fileList.value = list;
-      print("getFileList------${state.fileList}");
-      update(['ImageUpload', 'ImagePreview']);
+      state.imageUploadController.addAll(list);
+      print("getFileList------${state.imageUploadController.list}");
     });
-  }
-
-  void onChange(List<FileModel> file) {
-    print("file---$file");
-    state.fileList.value = file;
-    update(['ImageUpload', 'ImagePreview']);
   }
 }

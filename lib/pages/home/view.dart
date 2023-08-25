@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/common/widgets/image_preview.dart';
 import 'package:flutter_demo/common/widgets/image_upload.dart';
 import 'package:flutter_demo/pages/home/controller.dart';
 import 'package:get/get.dart';
@@ -16,20 +15,22 @@ class HomePage extends GetView<HomeController> {
       ),
       body: Column(
         children: [
-          GetBuilder<HomeController>(
-            id: 'ImageUpload',
-            init: HomeController(),
-            builder: (_) => ImageUpload(
-              items: controller.state.fileList,
-              onChange: controller.onChange,
-            ),
+          ImageUpload(
+            controller: controller.state.imageUploadController,
           ),
-          GetBuilder<HomeController>(
-            id: 'ImagePreview',
-            init: HomeController(),
-            builder: (_) => ImagePreview(
-              items: controller.state.fileList,
-            ),
+          // GetBuilder<HomeController>(
+          //   id: 'ImagePreview',
+          //   init: HomeController(),
+          //   builder: (_) => ImagePreview(
+          //     items: controller.state.fileList,
+          //   ),
+          // ),
+          ElevatedButton(
+            onPressed: () {
+              // Get.toNamed(AppRoutes.pullRefresh);
+              print(controller.state.imageUploadController.toString());
+            },
+            child: const Text('pull_refresh demo page'),
           ),
         ],
       ),

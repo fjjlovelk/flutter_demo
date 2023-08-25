@@ -6,12 +6,60 @@ import 'package:flutter_demo/common/widgets/image_select.dart';
 import 'package:flutter_demo/common/widgets/image_upload_item.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
-class ImageUpload extends StatelessWidget {
-  /// 文件列表
-  final List<FileModel> items;
+class ImageUploadController extends ChangeNotifier {
+  List<FileModel> _list = [];
 
-  /// 文件改变的回调
-  final void Function(List<FileModel>) onChange;
+  List<FileModel> get list => _list;
+
+  void remove(FileModel e) {
+    _list.remove(e);
+    notifyListeners();
+  }
+
+  void removeAt(int index) {
+    if (index > _list.length || index < 0) {
+      throw (StateError("index is invalid"));
+    }
+    _list.removeAt(index);
+    notifyListeners();
+  }
+
+  void removeAll(List<FileModel> l) {
+    _list = [];
+    notifyListeners();
+  }
+
+  void add(FileModel e) {
+    _list.add(e);
+    notifyListeners();
+  }
+
+  void addAll(List<FileModel> l) {
+    _list.addAll(l);
+    notifyListeners();
+  }
+
+  void change(int index, FileModel e) {
+    if (index > _list.length || index < 0) {
+      throw (StateError("index is invalid"));
+    }
+    _list[index].filename = e.filename;
+    _list[index].filepath = e.filepath;
+    notifyListeners();
+  }
+
+  @override
+  String toString() {
+    return _list
+        .map((e) =>
+            "filename：${e.filename};filepath：${e.filepath};assetEntity：${e.assetEntity == null}")
+        .join('---');
+  }
+}
+
+class ImageUpload extends StatelessWidget {
+  /// ImageUploadController，用来控制与获取文件列表
+  final ImageUploadController controller;
 
   /// 每行个数
   final int rowCount;
@@ -31,66 +79,72 @@ class ImageUpload extends StatelessWidget {
     this.spacing = 8,
     this.countLimit = 5,
     this.sizeLimit = 1,
-    required this.onChange,
-    required this.items,
+    required this.controller,
   }) : super(key: key);
 
   /// 选择照片/拍照 触发事件
   void imageChange(List<AssetEntity> file) {
-    if (items.length + file.length > countLimit) {
+    if (controller.list.length + file.length > countLimit) {
       LoadingUtil.showInfo('最多只能选择$countLimit张图片');
       return;
     }
-    final List<FileModel> list = [...items];
-    for (var item in file) {
-      final fileModel = FileModel(assetEntity: item);
-      list.add(fileModel);
-    }
-    onChange.call(list);
+    final List<FileModel> list =
+        file.map((e) => FileModel(assetEntity: e)).toList();
+    controller.addAll(list);
   }
 
   @override
   Widget build(BuildContext context) {
-    final fileList = items.map((e) => FileModel.fromJson(e.toJson())).toList();
-    final noPlusIcon = countLimit != -1 && fileList.length == countLimit;
-    return GridView.builder(
-      shrinkWrap: true,
-      padding: EdgeInsets.all(spacing),
-      itemCount: fileList.length + (noPlusIcon ? 0 : 1),
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: rowCount,
-        mainAxisSpacing: spacing,
-        crossAxisSpacing: spacing,
-      ),
-      itemBuilder: (_, index) {
-        if (!noPlusIcon && index == fileList.length) {
-          return ImageSelect(
-            countLimit: countLimit,
-            selectedCount: fileList.length,
-            onChange: imageChange,
-          );
-        }
-        final e = fileList[index];
-        return ImageUploadItem(
-          key: ValueKey<String>(
-              e.filepath.isNotEmpty ? e.filepath : (e.assetEntity?.id ?? '')),
-          assetEntity: e.assetEntity,
-          url: e.filepath,
-          sizeLimit: sizeLimit,
-          onSuccess: (f) {
-            e.filepath = f.filepath;
-            e.filename = f.filename;
-            onChange.call(fileList);
-          },
-          onError: () {
-            fileList.remove(e);
-            onChange.call(fileList);
-          },
-          onLongPress: (CancelToken cancelToken) {
-            cancelToken.cancel();
-            fileList.remove(e);
-            onChange.call(fileList);
+    return ListenableBuilder(
+      listenable: controller,
+      builder: (BuildContext context, Widget? child) {
+        print("ListenableBuilder----builder");
+        final noPlusIcon =
+            countLimit != -1 && controller.list.length == countLimit;
+        return GridView.builder(
+          shrinkWrap: true,
+          padding: EdgeInsets.all(spacing),
+          itemCount: controller.list.length + (noPlusIcon ? 0 : 1),
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: rowCount,
+            mainAxisSpacing: spacing,
+            crossAxisSpacing: spacing,
+          ),
+          itemBuilder: (_, index) {
+            if (!noPlusIcon && index == controller.list.length) {
+              return ImageSelect(
+                countLimit: countLimit,
+                selectedCount: controller.list.length,
+                onChange: imageChange,
+              );
+            }
+            final e = controller.list[index];
+            return ImageUploadItem(
+              key: ValueKey<String>(e.filepath.isNotEmpty
+                  ? e.filepath
+                  : (e.assetEntity?.id ?? '')),
+              assetEntity: e.assetEntity,
+              url: e.filepath,
+              sizeLimit: sizeLimit,
+              onSuccess: (f) {
+                controller.change(index, f);
+                // e.filepath = f.filepath;
+                // e.filename = f.filename;
+                // onChange.call(fileList);
+              },
+              onError: () {
+                controller.remove(e);
+                // fileList.remove(e);
+                // onChange.call(fileList);
+              },
+              onLongPress: (CancelToken cancelToken) {
+                cancelToken.cancel();
+                controller.remove(e);
+                // fileList.remove(e);
+                // onChange.call(fileList);
+              },
+            );
           },
         );
       },
