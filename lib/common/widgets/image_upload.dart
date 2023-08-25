@@ -101,9 +101,7 @@ class ImageUpload extends StatelessWidget {
     return ListenableBuilder(
       listenable: controller,
       builder: (BuildContext context, Widget? child) {
-        if (onChange != null) {
-          onChange!(controller.list);
-        }
+        onChange?.call(controller.list);
         final noPlusIcon =
             countLimit != -1 && controller.list.length == countLimit;
         return GridView.builder(
