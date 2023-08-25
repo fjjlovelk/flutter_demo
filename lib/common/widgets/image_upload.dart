@@ -61,6 +61,8 @@ class ImageUpload extends StatelessWidget {
   /// ImageUploadController，用来控制与获取文件列表
   final ImageUploadController controller;
 
+  final void Function(List<FileModel>)? onChange;
+
   /// 每行个数
   final int rowCount;
 
@@ -80,6 +82,7 @@ class ImageUpload extends StatelessWidget {
     this.countLimit = 5,
     this.sizeLimit = 1,
     required this.controller,
+    this.onChange,
   }) : super(key: key);
 
   /// 选择照片/拍照 触发事件
@@ -98,7 +101,9 @@ class ImageUpload extends StatelessWidget {
     return ListenableBuilder(
       listenable: controller,
       builder: (BuildContext context, Widget? child) {
-        print("ListenableBuilder----builder");
+        if (onChange != null) {
+          onChange!(controller.list);
+        }
         final noPlusIcon =
             countLimit != -1 && controller.list.length == countLimit;
         return GridView.builder(
@@ -129,20 +134,13 @@ class ImageUpload extends StatelessWidget {
               sizeLimit: sizeLimit,
               onSuccess: (f) {
                 controller.change(index, f);
-                // e.filepath = f.filepath;
-                // e.filename = f.filename;
-                // onChange.call(fileList);
               },
               onError: () {
                 controller.remove(e);
-                // fileList.remove(e);
-                // onChange.call(fileList);
               },
               onLongPress: (CancelToken cancelToken) {
                 cancelToken.cancel();
                 controller.remove(e);
-                // fileList.remove(e);
-                // onChange.call(fileList);
               },
             );
           },
