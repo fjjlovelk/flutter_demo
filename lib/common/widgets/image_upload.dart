@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/common/models/file_model.dart';
@@ -9,7 +11,7 @@ import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 class ImageUploadController extends ChangeNotifier {
   List<FileModel> _list = [];
 
-  List<FileModel> get list => _list;
+  UnmodifiableListView<FileModel> get list => UnmodifiableListView(_list);
 
   void remove(FileModel e) {
     _list.remove(e);

@@ -21,7 +21,7 @@ class FileUtil {
     }
   }
 
-  /// 图片压缩 -- [bytes] 文件字节；[targetSize] 目标大小，默认1，单位：Mb
+  /// 图片压缩 -- [bytes] 文件字节；[targetSize] 目标大小，默认1，单位：MB
   static Future<Uint8List> compressImage(
     Uint8List bytes, {
     int targetSize = 1,

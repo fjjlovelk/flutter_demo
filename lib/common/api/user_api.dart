@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_demo/common/models/events_model.dart';
 import 'package:flutter_demo/common/models/file_model.dart';
 import 'package:flutter_demo/common/models/user_model.dart';
 import 'package:flutter_demo/common/utils/http_util.dart';
@@ -28,5 +29,13 @@ class UserApi {
       cancelToken: cancelToken,
     );
     return FileModel.fromJson(response);
+  }
+
+  /// 获取github events
+  static Future<List<EventsModel>> events(
+      Map<String, dynamic> queryParameters) async {
+    var response = await HttpUtil().get('https://api.github.com/events',
+        queryParameters: queryParameters) as List;
+    return response.map((e) => EventsModel.fromJson(e)).toList();
   }
 }

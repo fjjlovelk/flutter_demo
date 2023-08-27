@@ -10,7 +10,7 @@ class HomeController extends GetxController {
 
   @override
   void onInit() {
-    getFileList();
+    // getFileList();
     super.onInit();
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/common/router/app_routes.dart';
 import 'package:flutter_demo/common/widgets/image_upload.dart';
 import 'package:flutter_demo/pages/home/controller.dart';
 import 'package:get/get.dart';
@@ -27,8 +28,8 @@ class HomePage extends GetView<HomeController> {
           // ),
           ElevatedButton(
             onPressed: () {
-              // Get.toNamed(AppRoutes.pullRefresh);
-              print(controller.state.imageUploadController.toString());
+              Get.toNamed(AppRoutes.pullRefresh);
+              // print(controller.state.imageUploadController.toString());
             },
             child: const Text('pull_refresh demo page'),
           ),
